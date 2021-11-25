@@ -1,6 +1,6 @@
 const { Pool } = require('pg');
-const args = process.argv.slice(2);
-console.log(args);
+const cohortsName = process.argv.slice(2);
+const values = [`%${cohortsName$}%`];
 
 const pool = new Pool({
   user: 'vagrant',
@@ -15,9 +15,9 @@ FROM teachers
 JOIN assistance_requests ON teacher_id = teachers.id
 JOIN students ON student_id = students.id
 JOIN cohorts ON cohort_id = cohorts.id
-WHERE cohorts.name LIKE '%${args[0]}%'
+WHERE cohorts.name LIKE $1
 GROUP BY teachers.name, cohort
-ORDER BY teachers.name;`)
+ORDER BY teachers.name;`, values)
 .then(res => {
   res.rows.forEach(user => {
     console.log(`${user.cohort}: ${user.name}`);
